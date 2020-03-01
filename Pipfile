@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+spyder = "==3.3.6"
+pandas = "*"
+numpy = "*"
+scipy = "*"
+xlrd = "*"
+matplotlib = "*"
+
+[requires]
+python_version = "3.6"
