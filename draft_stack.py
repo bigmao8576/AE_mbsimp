@@ -6,12 +6,8 @@ train each level with stacks
 import tensorflow as tf
 import os
 
-import utils
 import numpy as np
 import matplotlib.pyplot as plt
-
-from scipy import io
-from scipy import interpolate
 
 import pickle
 
@@ -22,9 +18,15 @@ save_folder = 'training_process'
 if not os.path.exists(save_folder):
     os.mkdir(save_folder)
 
+model_save_path = os.path.join(save_folder,'cnn_AE')
 
-os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID" 
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+if not os.path.exists(model_save_path):
+    auto_hie = ae_hie()
+else:
+    auto_hie = tf.keras.models.load_model(model_save_path)
+    
+    
+    
 
 signal_pool, mask_pool = pickle.load( open( "signal_pool.pkl", "rb" ) )
 
@@ -43,7 +45,7 @@ x_signal = temp_iter.__next__()
 
 
 
-auto_hie = ae_hie()
+
 optimizer = tf.keras.optimizers.RMSprop(1e-4)
 ft_op = tf.keras.optimizers.RMSprop(1e-5)
 
@@ -294,7 +296,7 @@ def train_each_level(level,train_th,int_ep):
             file_name = os.path.join(save_folder,'example_%d.png'%level)
             plt.savefig(file_name)
             plt.close()
-            plt.plot(temp_dic['la_l%d'%level][1,:200,2]);plt.plot(temp_dic['l%d_int'%level][1,:200,2]);plt.show()
+            plt.plot(temp_dic['la_l%d'%level][1,:200,2]);plt.plot(temp_dic['l%d_int'%level][1,:200,2])
             file_name = os.path.join(save_folder,'example_zoomin_%d.png'%level)
             plt.savefig(file_name)
             plt.close()
@@ -351,19 +353,42 @@ def train_each_level_ft(level,train_th,int_ep):
 loss_th = 1e-4
 
 total_loss = train_each_level(level=1,train_th=loss_th,int_ep=10)
-total_loss = train_each_level(level=2,train_th=loss_th,int_ep=10)
-total_loss = train_each_level_ft(level=2,train_th=loss_th*2,int_ep=10)
-total_loss = train_each_level(level=3,train_th=loss_th,int_ep=10)
-total_loss = train_each_level_ft(level=3,train_th=loss_th*2,int_ep=10)
-total_loss = train_each_level(level=4,train_th=loss_th,int_ep=10)
-total_loss = train_each_level_ft(level=4,train_th=loss_th*2,int_ep=10)
-total_loss = train_each_level(level=5,train_th=loss_th,int_ep=10)
-total_loss = train_each_level_ft(level=5,train_th=loss_th*2,int_ep=10)
-total_loss = train_each_level(level=6,train_th=loss_th,int_ep=10)
-total_loss = train_each_level_ft(level=6,train_th=loss_th*2,int_ep=10)
-total_loss = train_each_level(level=7,train_th=loss_th,int_ep=10)
-total_loss = train_each_level_ft(level=7,train_th=loss_th*2,int_ep=10)
+auto_hie.save(os.path.join(save_folder,'cnn_AE'))
 
+total_loss = train_each_level(level=2,train_th=loss_th,int_ep=10)
+auto_hie.save(os.path.join(save_folder,'cnn_AE'))
+
+total_loss = train_each_level_ft(level=2,train_th=loss_th*2,int_ep=10)
+auto_hie.save(os.path.join(save_folder,'cnn_AE'))
+
+total_loss = train_each_level(level=3,train_th=loss_th,int_ep=10)
+auto_hie.save(os.path.join(save_folder,'cnn_AE'))
+
+total_loss = train_each_level_ft(level=3,train_th=loss_th*2,int_ep=10)
+auto_hie.save(os.path.join(save_folder,'cnn_AE'))
+
+total_loss = train_each_level(level=4,train_th=loss_th,int_ep=10)
+auto_hie.save(os.path.join(save_folder,'cnn_AE'))
+
+total_loss = train_each_level_ft(level=4,train_th=loss_th*2,int_ep=10)
+auto_hie.save(os.path.join(save_folder,'cnn_AE'))
+
+total_loss = train_each_level(level=5,train_th=loss_th,int_ep=10)
+auto_hie.save(os.path.join(save_folder,'cnn_AE'))
+
+total_loss = train_each_level_ft(level=5,train_th=loss_th*2,int_ep=10)
+auto_hie.save(os.path.join(save_folder,'cnn_AE'))
+
+total_loss = train_each_level(level=6,train_th=loss_th,int_ep=10)
+auto_hie.save(os.path.join(save_folder,'cnn_AE'))
+
+total_loss = train_each_level_ft(level=6,train_th=loss_th*2,int_ep=10)
+auto_hie.save(os.path.join(save_folder,'cnn_AE'))
+
+total_loss = train_each_level(level=7,train_th=loss_th,int_ep=10)
+auto_hie.save(os.path.join(save_folder,'cnn_AE'))
+
+total_loss = train_each_level_ft(level=7,train_th=loss_th*2,int_ep=10)
 auto_hie.save(os.path.join(save_folder,'cnn_AE'))
 
 
