@@ -23,6 +23,7 @@ model_save_path = os.path.join(save_folder,'cnn_AE')
 if not os.path.exists(model_save_path):
     auto_hie = ae_hie()
 else:
+    print('load existing model')
     auto_hie = tf.keras.models.load_model(model_save_path)
     
     
