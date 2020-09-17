@@ -367,8 +367,8 @@ def train_each_level_ft(level,train_th,int_ep):
             loss_index_L = np.mean(ep_loss)
         ep += 1   
 
-loss_th = 0.01
-tole = 5
+loss_th = 0.001
+ft_th = 0.05
 
 total_loss = train_each_level(level=1,train_th=loss_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
@@ -376,36 +376,36 @@ auto_hie.save_weights(checkpoint_path)
 total_loss = train_each_level(level=2,train_th=loss_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
 
-total_loss = train_each_level_ft(level=2,train_th=loss_th*tole,int_ep=10)
+total_loss = train_each_level_ft(level=2,train_th=ft_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
 
 total_loss = train_each_level(level=3,train_th=loss_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
 
-total_loss = train_each_level_ft(level=3,train_th=loss_th*tole,int_ep=10)
+total_loss = train_each_level_ft(level=3,train_th=ft_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
 
 total_loss = train_each_level(level=4,train_th=loss_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
 
-total_loss = train_each_level_ft(level=4,train_th=loss_th*tole,int_ep=10)
+total_loss = train_each_level_ft(level=4,train_th=ft_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
 
 total_loss = train_each_level(level=5,train_th=loss_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
 
-total_loss = train_each_level_ft(level=5,train_th=loss_th*tole,int_ep=10)
+total_loss = train_each_level_ft(level=5,train_th=ft_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
 
 total_loss = train_each_level(level=6,train_th=loss_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
 
-total_loss = train_each_level_ft(level=6,train_th=loss_th*tole,int_ep=10)
+total_loss = train_each_level_ft(level=6,train_th=ft_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
 
 total_loss = train_each_level(level=7,train_th=loss_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
 
-total_loss = train_each_level_ft(level=7,train_th=loss_th*tole,int_ep=10)
+total_loss = train_each_level_ft(level=7,train_th=ft_th,int_ep=10)
 auto_hie.save_weights(checkpoint_path)
 
