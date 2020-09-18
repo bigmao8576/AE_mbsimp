@@ -238,14 +238,15 @@ def train_step_ft(level):
 def train_each_level(level,train_th,int_ep):
     with strategy.scope():
         save_path = os.path.join(save_folder,'L%d_loss.pkl'%level)
+        loss_index_L = 10.0
         if os.path.exists(save_path):
             loss_tracking = pickle.load(open(save_path, "rb" ))
             ep = (len(loss_tracking)-1)*10+1
-            loss_index_L = loss_tracking[-1]
+
         else:
             loss_tracking = []
             ep = 0
-            loss_index_L = 1.0
+
             
         train_L = train_step_L(level=level)
             
@@ -290,16 +291,16 @@ def train_each_level(level,train_th,int_ep):
 
 
 def train_each_level_ft(level,train_th,int_ep):
-    
+    loss_index_L = 10.0
     save_path = os.path.join(save_folder,'L%d_ft_loss.pkl'%level)
     if os.path.exists(save_path):
         loss_tracking = pickle.load(open(save_path, "rb" ))
         ep = (len(loss_tracking)-1)*10+1
-        loss_index_L = loss_tracking[-1]
+
     else:
         loss_tracking = []
         ep = 0
-        loss_index_L = 1.0
+
         
     train_ft = train_step_ft(level=level)
         
