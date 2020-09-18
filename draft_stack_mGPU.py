@@ -13,47 +13,7 @@ import pickle
 
 from stacked_AE import ae_hie
 
-# setup GPU
-strategy = tf.distribute.MirroredStrategy(['/gpu:0', '/gpu:1'])
-save_folder = 'training_process'
 
-if not os.path.exists(save_folder):
-    os.mkdir(save_folder)
-    
-    
-checkpoint_path = os.path.join(save_folder,'check_point','cp.ckpt')
-checkpoint_dir = os.path.dirname(checkpoint_path)
-
-
-signal_pool, mask_pool = pickle.load( open( "signal_pool.pkl", "rb" ) )
-signal_pool = np.concatenate([signal_pool, mask_pool],-1)
-
-
-batch_size=64
-r_data = tf.data.Dataset.from_tensor_slices((signal_pool))
-r_data = r_data.shuffle(10000)
-r_data = r_data.batch(batch_size)
-r_data = r_data.prefetch(2)
-
-temp_iter = r_data.__iter__()
-x_signal = temp_iter.__next__()
-
-
-with strategy.scope():
-    auto_hie = ae_hie()
-    
-    
-    if not os.path.exists(checkpoint_dir):    
-        cont_train = False
-        os.mkdir(checkpoint_dir)
-    else:
-        print('load existing model')
-        auto_hie.load_weights(checkpoint_path)
-        cont_train = True
-
-
-    optimizer = tf.keras.optimizers.RMSprop(1e-5)
-    ft_op = tf.keras.optimizers.RMSprop(1e-5)
 
 def dis_loss_pair(x_in,x_out):
     x_ch = x_in.shape[-1]
@@ -369,45 +329,106 @@ def train_each_level_ft(level,train_th,int_ep):
             loss_index_L = np.mean(ep_loss)
         ep += 1   
 
-loss_th = 0.01
-ft_th = 0.05
+if __name__ == "__main__":
+    
+    
+    
+        # setup GPU
+    strategy = tf.distribute.MirroredStrategy(['/gpu:0', '/gpu:1'])
+    save_folder = 'training_process'
+    
+    if not os.path.exists(save_folder):
+        os.mkdir(save_folder)
+        
+        
+    checkpoint_path = os.path.join(save_folder,'check_point','cp.ckpt')
+    checkpoint_dir = os.path.dirname(checkpoint_path)
+    
+    
+    signal_pool, mask_pool = pickle.load( open( "signal_pool.pkl", "rb" ) )
+    signal_pool = np.concatenate([signal_pool, mask_pool],-1)
+    
+    
+    batch_size=64
+    r_data = tf.data.Dataset.from_tensor_slices((signal_pool))
+    r_data = r_data.shuffle(10000)
+    r_data = r_data.batch(batch_size)
+    r_data = r_data.prefetch(2)
+    
+    temp_iter = r_data.__iter__()
+    x_signal = temp_iter.__next__()
+    
+    
+    with strategy.scope():
+        auto_hie = ae_hie()
+        
+        
+        if not os.path.exists(checkpoint_dir):    
+            cont_train = False
+            os.mkdir(checkpoint_dir)
+        else:
+            print('load existing model')
+            auto_hie.load_weights(checkpoint_path)
+            cont_train = True
 
-total_loss = train_each_level(level=1,train_th=loss_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
 
-total_loss = train_each_level(level=2,train_th=loss_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
+    
 
-total_loss = train_each_level_ft(level=2,train_th=ft_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
+    
+    th_seq = np.linspace(np.log10(0.05), -4, num=100)
+    th_seq = 10**th_seq
+    lr_seq = np.linspace(np.log10(2e-5), -7, num=100)
+    lr_seq = 10**lr_seq
+    
+    for th, lr in zip (th_seq,lr_seq):
+        
+        
+        loss_th = np.round(th,6)
+        with strategy.scope():
+            optimizer = tf.keras.optimizers.RMSprop(lr)
+            ft_op = tf.keras.optimizers.RMSprop(lr)
+        
 
-total_loss = train_each_level(level=3,train_th=loss_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
+        ft_th = 5*loss_th
+    
 
-total_loss = train_each_level_ft(level=3,train_th=ft_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
-
-total_loss = train_each_level(level=4,train_th=loss_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
-
-total_loss = train_each_level_ft(level=4,train_th=ft_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
-
-total_loss = train_each_level(level=5,train_th=loss_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
-
-total_loss = train_each_level_ft(level=5,train_th=ft_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
-
-total_loss = train_each_level(level=6,train_th=loss_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
-
-total_loss = train_each_level_ft(level=6,train_th=ft_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
-
-total_loss = train_each_level(level=7,train_th=loss_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
-
-total_loss = train_each_level_ft(level=7,train_th=ft_th,int_ep=10)
-auto_hie.save_weights(checkpoint_path)
-
+    
+        total_loss = train_each_level(level=1,train_th=loss_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+        
+        total_loss = train_each_level(level=2,train_th=loss_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+        
+        total_loss = train_each_level_ft(level=2,train_th=ft_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+        
+        total_loss = train_each_level(level=3,train_th=loss_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+        
+        total_loss = train_each_level_ft(level=3,train_th=ft_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+        
+        total_loss = train_each_level(level=4,train_th=loss_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+        
+        total_loss = train_each_level_ft(level=4,train_th=ft_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+        
+        total_loss = train_each_level(level=5,train_th=loss_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+        
+        total_loss = train_each_level_ft(level=5,train_th=ft_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+        
+        total_loss = train_each_level(level=6,train_th=loss_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+        
+        total_loss = train_each_level_ft(level=6,train_th=ft_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+        
+        total_loss = train_each_level(level=7,train_th=loss_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+        
+        total_loss = train_each_level_ft(level=7,train_th=ft_th,int_ep=10)
+        auto_hie.save_weights(checkpoint_path)
+    
