@@ -31,7 +31,7 @@ signal_pool = np.concatenate([signal_pool, mask_pool],-1)
 
 batch_size=64
 r_data = tf.data.Dataset.from_tensor_slices((signal_pool))
-#r_data = r_data.shuffle(10000)
+r_data = r_data.shuffle(10000)
 r_data = r_data.batch(batch_size)
 r_data = r_data.prefetch(2)
 
@@ -63,7 +63,9 @@ def dis_loss_pair(x_in,x_out):
 
     x_out_sig = tf.slice(x_out, [0, 0, 0], [-1, -1, x_ch-1])   
     
-    d_loss = tf.reduce_sum(((x_sig-x_out_sig))**2)/tf.reduce_sum(x_sig**2)
+    nsr = tf.reduce_sum((x_sig-x_out_sig)**2,1)/tf.reduce_sum(x_sig**2,1)
+    
+    d_loss = tf.reduce_mean(nsr)
     
     
     return d_loss
@@ -367,7 +369,7 @@ def train_each_level_ft(level,train_th,int_ep):
             loss_index_L = np.mean(ep_loss)
         ep += 1   
 
-loss_th = 0.001
+loss_th = 0.01
 ft_th = 0.05
 
 total_loss = train_each_level(level=1,train_th=loss_th,int_ep=10)
