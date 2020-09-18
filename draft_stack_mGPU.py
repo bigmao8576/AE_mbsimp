@@ -52,7 +52,7 @@ with strategy.scope():
         cont_train = True
 
 
-    optimizer = tf.keras.optimizers.RMSprop(1e-4)
+    optimizer = tf.keras.optimizers.RMSprop(1e-5)
     ft_op = tf.keras.optimizers.RMSprop(1e-5)
 
 def dis_loss_pair(x_in,x_out):
