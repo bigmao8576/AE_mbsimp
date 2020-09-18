@@ -238,7 +238,7 @@ def train_step_ft(level):
 def train_each_level(level,train_th,int_ep):
     with strategy.scope():
         save_path = os.path.join(save_folder,'L%d_loss.pkl'%level)
-        if os.path.exists(save_path) and cont_train:
+        if os.path.exists(save_path):
             loss_tracking = pickle.load(open(save_path, "rb" ))
             ep = (len(loss_tracking)-1)*10+1
             loss_index_L = loss_tracking[-1]
@@ -292,7 +292,7 @@ def train_each_level(level,train_th,int_ep):
 def train_each_level_ft(level,train_th,int_ep):
     
     save_path = os.path.join(save_folder,'L%d_ft_loss.pkl'%level)
-    if os.path.exists(save_path) and cont_train:
+    if os.path.exists(save_path):
         loss_tracking = pickle.load(open(save_path, "rb" ))
         ep = (len(loss_tracking)-1)*10+1
         loss_index_L = loss_tracking[-1]
@@ -383,12 +383,12 @@ if __name__ == "__main__":
     for th, lr in zip (th_seq,lr_seq):
         
         
-        loss_th = np.round(th,6)
+        
         with strategy.scope():
             optimizer = tf.keras.optimizers.RMSprop(lr)
             ft_op = tf.keras.optimizers.RMSprop(lr)
         
-
+        loss_th = np.round(th,6)
         ft_th = 5*loss_th
     
 
