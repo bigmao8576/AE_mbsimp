@@ -323,7 +323,22 @@ def train_each_level_ft(level,train_th,int_ep):
             plt.savefig(file_name)
             plt.close()
     
-    
+            if level == 7:
+                
+                raw_data = signal_pool[:10,:,:]
+                temp_dic = auto_hie(raw_data)
+                
+                plt.plot(temp_dic['la_l1'][1,:,2]);plt.plot(temp_dic['l1_rec'][1,:,2])
+                file_name = os.path.join(save_folder,'example_final.png')
+                plt.savefig(file_name)
+                plt.close()
+                plt.plot(temp_dic['la_l1'][1,:200,2]);plt.plot(temp_dic['la_l1'][1,:200,2])
+                file_name = os.path.join(save_folder,'example_zoomin_final.png')
+                plt.savefig(file_name)
+                plt.close()
+            
+            
+            
             pickle.dump(loss_tracking, open(save_path, "wb" ) )
             
             
@@ -387,7 +402,7 @@ if __name__ == "__main__":
         
         with strategy.scope():
             optimizer = tf.keras.optimizers.RMSprop(lr)
-            ft_op = tf.keras.optimizers.RMSprop(lr)
+            ft_op = tf.keras.optimizers.RMSprop(lr/10)
         
         loss_th = np.round(th,6)
         ft_th = 5*loss_th
