@@ -294,7 +294,7 @@ if __name__ == "__main__":
             
             loss_th = np.round(th,6)
       
-            train_each_level(level=1,train_th=loss_th,int_ep=50)
+            train_each_level(level=level,train_th=loss_th,int_ep=50)
             auto_hie.save_weights(checkpoint_path)
         
 
