@@ -281,16 +281,16 @@ if __name__ == "__main__":
     
 
     
-    th_seq = np.linspace(np.log10(0.05), -4, num=50)
+    th_seq = np.linspace(np.log10(0.05), np.log10(0.0005), num=50)
     th_seq = 10**th_seq
-    lr_seq = np.linspace(np.log10(1e-4), np.log10(5e-6), num=50)
+    lr_seq = np.linspace(np.log10(5e-4), np.log10(5e-6), num=50)
     lr_seq = 10**lr_seq
 
 
     for level in range(1,8):
         for th, lr in zip (th_seq,lr_seq):
             with strategy.scope():
-                optimizer = tf.keras.optimizers.RMSprop(lr)
+                optimizer = tf.keras.optimizers.Adam(lr)
             
             loss_th = np.round(th,6)
       
@@ -303,7 +303,7 @@ if __name__ == "__main__":
     
     for th, lr in zip (th_seq,lr_seq):
         with strategy.scope():
-            ft_op = tf.keras.optimizers.RMSprop(lr/5)
+            ft_op = tf.keras.optimizers.Adam(lr/5)
         
         loss_th = np.round(th,6)
         ft_th = 10*loss_th
