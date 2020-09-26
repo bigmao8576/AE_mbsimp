@@ -283,7 +283,7 @@ if __name__ == "__main__":
     
     th_seq = np.linspace(np.log10(0.05), np.log10(0.0005), num=50)
     th_seq = 10**th_seq
-    lr_seq = np.linspace(np.log10(1e-3), np.log10(5e-6), num=50)
+    lr_seq = np.linspace(np.log10(1e-3), np.log10(1e-5), num=50)
     lr_seq = 10**lr_seq
 
 
