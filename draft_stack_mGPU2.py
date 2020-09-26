@@ -255,7 +255,7 @@ if __name__ == "__main__":
     signal_pool = np.concatenate([signal_pool, mask_pool],-1)
     
     
-    batch_size=64
+    batch_size=128
     r_data = tf.data.Dataset.from_tensor_slices((signal_pool))
     r_data = r_data.shuffle(10000)
     r_data = r_data.batch(batch_size)
@@ -286,9 +286,9 @@ if __name__ == "__main__":
     lr_seq = np.linspace(np.log10(1e-3), np.log10(1e-5), num=50)
     lr_seq = 10**lr_seq
 
-
-    for level in range(1,8):
-        for th, lr in zip (th_seq,lr_seq):
+    for th, lr in zip (th_seq,lr_seq):
+        for level in range(1,8):
+        
             with strategy.scope():
                 optimizer = tf.keras.optimizers.Adam(lr)
             
@@ -297,15 +297,17 @@ if __name__ == "__main__":
             train_each_level(level=level,train_th=loss_th,int_ep=50)
             auto_hie.save_weights(checkpoint_path)
         
-
+        final_loss = eva_loop_ft(r_data)
+        print('At th = %0.6f, the final_loss is %0.6f'%(th,final_loss))
+        print('---------------------------one training circle finished------------------')
     
-
-    
-    for th, lr in zip (th_seq,lr_seq):
-        with strategy.scope():
-            ft_op = tf.keras.optimizers.Adam(lr/5)
-        
-        loss_th = np.round(th,6)
-        ft_th = 10*loss_th
-        train_each_level_ft(train_th=ft_th,int_ep=50)
-        auto_hie.save_weights(checkpoint_path)
+# =============================================================================
+#     for th, lr in zip (th_seq,lr_seq):
+#         with strategy.scope():
+#             ft_op = tf.keras.optimizers.Adam(lr/5)
+#         
+#         loss_th = np.round(th,6)
+#         ft_th = 10*loss_th
+#         train_each_level_ft(train_th=ft_th,int_ep=50)
+#         auto_hie.save_weights(checkpoint_path)
+# =============================================================================
